@@ -1,7 +1,7 @@
-const { ipcRenderer, contextBridge } = require("electron");
-contextBridge.exposeInMainWorld("electron-api", {});
+import { ipcRenderer, contextBridge } from 'electron';
+contextBridge.exposeInMainWorld('electron-api', {});
 
-contextBridge.exposeInMainWorld("api", {
+contextBridge.exposeInMainWorld('api', {
   send: (channel, ...arg) => {
     ipcRenderer.send(channel, arg);
   },
@@ -20,5 +20,5 @@ contextBridge.exposeInMainWorld("api", {
   removeAllListeners: (channel) => {
     ipcRenderer.removeAllListeners(channel);
   },
-  setFullscreen: (flag) => ipcRenderer.invoke("setFullscreen", flag),
+  setFullscreen: (flag) => ipcRenderer.invoke('setFullscreen', flag),
 });

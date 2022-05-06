@@ -5,8 +5,8 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "start:electron": "ng build --base-href ./ && electron --inspect=5858 ./src/main.js",
-    "electron:local": "npm run build:prod && npx electron .",
+    "start:electron": "ng build --base-href ./ && tsc --p electron && electron --inspect=5858 ./dist/vscode-explore/main.js",
+    "electron:local": "npm run build:prod && tsc --p electron && npx electron .",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
