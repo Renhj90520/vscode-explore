@@ -1,5 +1,4 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
-import * as url from 'url';
 import * as path from 'path';
 import * as child_process from 'child_process';
 const execFile = child_process.execFile;
@@ -7,13 +6,19 @@ let mainWindow: any;
 import {
   getTitleBarStyle,
   TitleBarStyle,
+  useNativeFullScreen,
+  WindowMinimumSize,
+  WindowSettings,
 } from './platform/window/common/window';
 import { isMacintosh } from './base/common/platform';
+import MenuBar from './platform/menubar/menubar';
 
 function createWindow() {
   const options: any = {
     width: 800,
     height: 600,
+    minWidth: WindowMinimumSize.WIDTH,
+    minHeight: WindowMinimumSize.HEIGHT,
     webPreferences: {
       allowRunningInsecureContent: false,
       contextIsolation: true,
@@ -25,6 +30,22 @@ function createWindow() {
     icon: `${__dirname}/favicon.ico`,
   };
 
+  if (isMacintosh && !useNativeFullScreen()) {
+    options.fullscreenable = false;
+  }
+
+  if (isMacintosh) {
+    options.acceptFirstMouse = true;
+    if (WindowSettings.clickThroughInactive === false) {
+      options.acceptFirstMouse = false;
+    }
+  }
+
+  const useNativeTabs = isMacintosh && WindowSettings.nativeTabs === true;
+  if (useNativeTabs) {
+    options.tabbingIdentifier = 'vscode-explore';
+  }
+
   const useCustomTitleStyle = getTitleBarStyle() === TitleBarStyle.custom;
   if (useCustomTitleStyle) {
     options.titleBarStyle = 'hidden';
@@ -33,17 +54,64 @@ function createWindow() {
       options.frame = false;
     }
   }
-  debugger;
 
   mainWindow = new BrowserWindow(options);
-  mainWindow.webContents.openDevTools();
+
+  // mainWindow.webContents.openDevTools();
+
+  if (isMacintosh && useCustomTitleStyle) {
+    mainWindow.setSheetOffset(22); // offset dialogs by the height of the custom title bar if we have any
+  }
 
   mainWindow.loadFile(`${__dirname}/index.html`);
 
+  ipcMain.on('get-window-state', (event) => {
+    if (mainWindow) {
+      event.reply('window-state', mainWindow.isMaximized());
+    }
+  });
+
+  ipcMain.on('minimize-window', (event) => {
+    if (mainWindow) {
+      mainWindow.minimize();
+    }
+  });
+
+  ipcMain.on('toggle-window-maximize', (event) => {
+    if (mainWindow) {
+      if (mainWindow.isMaximized()) {
+        mainWindow.unmaximize();
+      } else {
+        mainWindow.maximize();
+      }
+    }
+  });
+
+  ipcMain.on('close-window', (event) => {
+    if (mainWindow) {
+      mainWindow = null;
+    }
+    app.quit();
+  });
+
+  mainWindow.on('maximize', () => {
+    mainWindow.webContents.send('window-state', true);
+  });
+  mainWindow.on('unmaximize', () => {
+    mainWindow.webContents.send('window-state', false);
+  });
   mainWindow.on('closed', function () {
     mainWindow = null;
+    app.quit();
   });
+
+  initMenuBar();
 }
+
+function initMenuBar() {
+  const menubar = new MenuBar();
+}
+
 const gotTheLock = app.requestSingleInstanceLock();
 
 if (!gotTheLock) {
@@ -100,14 +168,6 @@ if (!gotTheLock) {
         debugger;
         console.log(data);
       });
-    }
-  });
-
-  ipcMain.handle('setFullscreen', (event, flag) => {
-    console.log('fullscreen');
-    if (mainWindow) {
-      console.log(mainWindow);
-      mainWindow.setFullScreen(flag);
     }
   });
 

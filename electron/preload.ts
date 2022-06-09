@@ -20,5 +20,4 @@ contextBridge.exposeInMainWorld('api', {
   removeAllListeners: (channel) => {
     ipcRenderer.removeAllListeners(channel);
   },
-  setFullscreen: (flag) => ipcRenderer.invoke('setFullscreen', flag),
 });

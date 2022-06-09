@@ -1,0 +1,57 @@
+:host {
+  display: grid;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  align-items: center;
+  background-color: rgb(60, 60, 60);
+  color: #ccc;
+
+  grid-template-columns: 40px 200px 1fr 138px;
+}
+.logo {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-app-region: drag;
+  padding-top: 2px;
+}
+.menus-container {
+  height: 100%;
+}
+.drag-region {
+  height: 100%;
+  width: 100%;
+  left: 0;
+  right: 0;
+  -webkit-app-region: drag;
+}
+.window-controls {
+  display: flex;
+  height: 100%;
+}
+.window-ctrl {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  width: 46px;
+  justify-content: center;
+  cursor: pointer;
+}
+.window-ctrl:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+.window-ctrl.close:hover {
+  background-color: rgba(232, 17, 35, 0.9);
+  .icon {
+    background-image: url(^assets/images/title-bar/close-active.svg) !important;
+  }
+}
+.icon {
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 14px;
+  height: 100%;
+}

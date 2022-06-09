@@ -1,0 +1,36 @@
+<div class="logo">
+  <img src="assets/images/title-bar/logo.png" width="20px" height="18px" />
+</div>
+<div class="menus-container"></div>
+<div class="drag-region"></div>
+<div class="window-controls">
+  <div class="window-ctrl" (click)="minimizeWidow()">
+    <div
+      class="icon"
+      style="background-image: url(assets/images/title-bar/minimize.svg)"
+    ></div>
+  </div>
+  <div class="window-ctrl" (click)="toggleMaximizeWindow()">
+    <div
+      class="icon"
+      style="
+        background-image: url(assets/images/title-bar/restore.svg);
+        width: 12px;
+      "
+      [ngStyle]="{
+        'background-image': isWindowMaximized
+          ? 'url(assets/images/title-bar/restore.svg)'
+          : 'url(assets/images/title-bar/maximize.svg)'
+      }"
+    ></div>
+  </div>
+  <div class="window-ctrl close" (click)="closeWindow()">
+    <div
+      class="icon"
+      style="
+        background-image: url(assets/images/title-bar/close.svg);
+        width: 16px;
+      "
+    ></div>
+  </div>
+</div>
